@@ -8,6 +8,8 @@ package com.coolweather.app.model;
  */
 public class City {
 
+	public static final String TABLE_NAME_CITY = "City";
+
 	private int id;
 	private String cityName;
 	private String cityCode;

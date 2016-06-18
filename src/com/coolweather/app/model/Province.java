@@ -7,6 +7,9 @@ package com.coolweather.app.model;
  * @date: 2016年6月17日 下午11:12:16
  */
 public class Province {
+
+	public static final String TABLE_NAME_PROVINCE = "Province";
+
 	private int id;
 	private String provinceName;
 	private String provinceCode;

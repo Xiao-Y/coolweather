@@ -8,6 +8,8 @@ package com.coolweather.app.model;
  */
 public class County {
 
+	public static final String TABLE_NAME_COUNTY = "County";
+
 	private int id;
 	private String countyName;
 	private String countyCode;
