@@ -31,7 +31,7 @@ public class HttpUtil {
 					}
 					if (listener != null) {
 						// 回调onFinish()方法
-						listener.onFinish();
+						listener.onFinish(response.toString());
 					}
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
