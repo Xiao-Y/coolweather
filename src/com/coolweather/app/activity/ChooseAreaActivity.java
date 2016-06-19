@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -51,14 +54,19 @@ public class ChooseAreaActivity extends Activity {
 	private Province selectedProvince;
 	// 选中的市
 	private City selectedCity;
-	// 选中的区
-	private County selectedCounty;
 	// 选中的级别
 	private int currentLevel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("city_selected", false)) {
+			Intent intent = new Intent(this, WeatherActivity.class);
+			this.startActivity(intent);
+			this.finish();
+			return;
+		}
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.choose_area);
 		listView = (ListView) this.findViewById(R.id.list_view);
@@ -76,9 +84,14 @@ public class ChooseAreaActivity extends Activity {
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(index);
 					queryCounties();
+				} else if (currentLevel == LEVEL_COUNTY) {
+					String countyCode = countyList.get(index).getCountyCode();
+					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
-
 		});
 		// 加载省级数据
 		this.queryProvinces();
@@ -142,7 +155,7 @@ public class ChooseAreaActivity extends Activity {
 	}
 
 	/**
-	 * 从服务上获取省市区数据
+	 * 从服务上获取省、市、区数据
 	 * 
 	 * @param code
 	 *            code码
@@ -206,12 +219,18 @@ public class ChooseAreaActivity extends Activity {
 		});
 	}
 
+	/**
+	 * 关闭进度对话框
+	 */
 	private void closeProgressDialog() {
 		if (progressDialog != null) {
 			progressDialog.dismiss();
 		}
 	}
 
+	/**
+	 * 显示进度对话框
+	 */
 	private void showProgressDialog() {
 		if (progressDialog == null) {
 			progressDialog = new ProgressDialog(this);
@@ -220,6 +239,9 @@ public class ChooseAreaActivity extends Activity {
 		}
 	}
 
+	/**
+	 * 捕获Back按键，根据当前的级别来判断，此时应该返回市列表、省列表、还是直接退出
+	 */
 	@Override
 	public void onBackPressed() {
 		if (currentLevel == LEVEL_COUNTY) {
